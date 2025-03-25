@@ -11,6 +11,6 @@ dependencies = [
 
 [[package]]
 name = "zigzag-rs"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77601fc442009394ca5ed560abb821a6857d7340cc2b995c5afde5ebebb294e1"
+checksum = "4be13092fdf7a0e970ca30ab3dd64d35e0f78bfd5b47c922648bd8945d6f43bb"
