@@ -10,5 +10,5 @@ keywords = ["varint", "encoding", "no_std", "zigzag", "embedded"]
 categories = ["no-std", "encoding", "embedded", "compression"]
 
 [dependencies]
-zigzag-rs = "0.2.0"
+zigzag-rs = "0.2.1"
 

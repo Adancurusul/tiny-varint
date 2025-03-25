@@ -11,7 +11,7 @@ A dependency-free, high-performance variable-length integer (VarInt) encoding/de
 - ✅ **Depends only on zigzag-rs**: Supports `#![no_std]` environments
 - ✅ **Full Type Support**: Supports all Rust native integer types
 - ✅ **High-performance Implementation**: Optimized critical paths for resource-constrained scenarios
-- ✅ **Zero-allocation Interface**: No dynamic memory allocation required, suitable for embedded systems
+- ✅ **Iterator-based Interface**: No dynamic memory allocation required, suitable for embedded systems
 - ✅ **Zigzag Encoding**: Efficiently handles signed integers
 - ✅ **Rich Error Handling**: Detailed error types and messages
 
@@ -33,8 +33,8 @@ tiny-varint = "0.1.0"
 | ZigZag Encoding | `encode_zigzag()` | Encodes signed integers using zigzag |
 | ZigZag Decoding | `decode_zigzag()` | Decodes zigzag-encoded signed integers |
 | Batch Processing | `VarIntEncoder/VarIntDecoder` | Batch encodes/decodes integer arrays |
-| Zero-Copy Encoding | `bytes_of()` | Iterator-based encoding without allocation |
-| Zero-Copy Decoding | `values_from()` | Iterator-based decoding without allocation |
+| Iterator-based Encoding | `bytes_of()` | Iterator-based encoding method |
+| Iterator-based Decoding | `values_from()` | Iterator-based decoding method |
 
 ### Direct Usage with encode/decode
 
@@ -84,7 +84,7 @@ let v2 = decoder.read::<u32>()?; // 456
 let v3 = decoder.read_zigzag::<i32>()?; // -789
 ```
 
-### Using Zero-Allocation Iterators
+### Using Iterator-based Methods
 
 ```rust
 use tiny_varint::{bytes_of, values_from};
@@ -114,7 +114,7 @@ tiny-varint has been optimized for various use cases:
 - **Inline Critical Functions**: Critical paths marked with `#[inline(always)]`
 - **Optimized Size Calculation**: Use lookup-based approach to quickly determine encoding size
 - **Batch Processing Optimization**: Batch operations avoid multiple boundary checks
-- **Zero-Copy Design**: Directly operate on provided buffers without copying data
+- **Iterator-based Design**: Directly operate on provided buffers without copying data
 
 
 ## Example Code
@@ -177,7 +177,7 @@ Check the [examples](./examples) directory for more examples:
 
 - [Basic Usage](./examples/basic_usage.rs)
 - [Protocol Serialization](./examples/protocol_serialization.rs)
-- [Zero-Copy](./examples/zero_copy.rs)
+- [Iterator API](./examples/zero_copy.rs)
 
 ## License
 

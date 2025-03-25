@@ -13,7 +13,7 @@
 //!
 //! * **Generic Integer Support**: Works with all integer types (u8-u128, i8-i128)
 //! * **Batch Processing API**: Efficiently handle multiple values with state management
-//! * **Zero-Copy Iterator API**: Memory-efficient processing without buffer allocation
+//! * **Iterator-based API**: Memory-efficient processing using iterator methods
 //! * **Basic Encoding Functions**: Low-level functions for direct use
 //! * **ZigZag Support**: Efficient encoding of signed integers
 //! * **No-std Compatible**: Works in embedded environments
@@ -57,19 +57,19 @@
 //! decoder.read_batch(&mut decoded).unwrap();
 //! ```
 //! 
-//! ### Zero-Copy API
+//! ### Iterator-based API
 //! 
 //! ```rust
 //! use tiny_varint::{bytes_of, values_from};
 //! 
-//! // Encode a value into bytes without allocating
+//! // Encode a value into bytes using iterator methods
 //! let value = 16384u64;
 //! for byte in bytes_of(value) {
 //!     // Process each byte individually
 //!     println!("{:02X}", byte);
 //! }
 //! 
-//! // Decode values from a byte buffer without allocating
+//! // Decode values from a byte buffer using iterator methods
 //! let buffer = [0x80, 0x80, 0x01]; // Encoded value 16384
 //! for result in values_from::<u64>(&buffer) {
 //!     match result {

@@ -1,6 +1,6 @@
-//! Zero-Allocation Iterator Example
+//! Iterator-based Example
 //! 
-//! This example demonstrates how to use tiny-varint's zero-allocation iterator API
+//! This example demonstrates how to use tiny-varint's iterator-based API
 //! This is particularly useful in embedded or resource-constrained environments
 //! Run with: cargo run --example zero_copy
 
@@ -13,7 +13,7 @@ use tiny_varint::{
 };
 
 fn main() {
-    println!("=== Zero-Allocation Iterator API Example ===\n");
+    println!("=== Iterator-based API Example ===\n");
     
     // 1. Encoding a single value using VarIntBytesIter iterator
     println!("1. Encoding a single value using VarIntBytesIter iterator:");
@@ -87,9 +87,9 @@ fn main() {
     // Simulate a simple data processing pipeline
     println!("  Data processing pipeline:");
     println!("    1. Generate raw data");
-    println!("    2. Encode using zero-allocation iterators");
+    println!("    2. Encode using iterator-based methods");
     println!("    3. Process encoded bytes");
-    println!("    4. Decode using zero-allocation iterators");
+    println!("    4. Decode using iterator-based methods");
     
     // Raw data
     let source_data = [42u64, 314, 2718, 31415];
