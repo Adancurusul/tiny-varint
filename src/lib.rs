@@ -16,6 +16,7 @@
 //! * **Iterator-based API**: Memory-efficient processing using iterator methods
 //! * **Basic Encoding Functions**: Low-level functions for direct use
 //! * **ZigZag Support**: Efficient encoding of signed integers
+//! * **Unified Value Type**: VarintValue enum for type-aware encoding/decoding
 //! * **No-std Compatible**: Works in embedded environments
 //!
 //! ## Usage Examples
@@ -78,6 +79,43 @@
 //!     }
 //! }
 //! ```
+//!
+//! ### VarintValue for mixed type data
+//!
+//! ```rust
+//! use tiny_varint::{VarintValue, varint};
+//!
+//! // Create values of different types
+//! let values = [
+//!     varint!(u32: 42),
+//!     varint!(i16: -100),
+//!     varint!(u64: 1000000)
+//! ];
+//!
+//! // Serialize each value
+//! let mut buffer = [0u8; 100];
+//! let mut pos = 0;
+//!
+//! for value in &values {
+//!     let bytes_written = value.to_bytes(&mut buffer[pos..]).unwrap();
+//!     pos += bytes_written;
+//! }
+//!
+//! // Deserialize values
+//! let mut read_pos = 0;
+//! let mut results = Vec::new();
+//!
+//! while read_pos < pos {
+//!     let (value, bytes_read) = VarintValue::from_bytes(&buffer[read_pos..pos]).unwrap();
+//!     results.push(value);
+//!     read_pos += bytes_read;
+//! }
+//!
+//! // Values are preserved with their original types
+//! assert_eq!(results[0], varint!(u32: 42));
+//! assert_eq!(results[1], varint!(i16: -100));
+//! assert_eq!(results[2], varint!(u64: 1000000));
+//! ```
 
 // Import zigzag-rs for ZigZag encoding/decoding
 extern crate zigzag_rs;
@@ -89,6 +127,7 @@ mod encoding;
 mod batch;
 mod iter;
 mod zigzag;
+mod value;
 #[cfg(test)]
 mod tests;
 
@@ -99,3 +138,5 @@ pub use encoding::{encode, decode, varint_size};
 pub use zigzag::{ZigZag, encode_zigzag, decode_zigzag};
 pub use batch::{VarIntEncoder, VarIntDecoder, encode_batch, decode_batch};
 pub use iter::{VarIntBytesIter, VarIntValuesIter, bytes_of, values_from};
+pub use value::VarintValue;
+// varint! macro is re-exported via #[macro_export]

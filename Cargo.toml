@@ -1,6 +1,6 @@
 [package]
 name = "tiny-varint"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Adancurusul <1016867898@qq.com>"]
 description = "A no_std compatible VarInt encoding/decoding Rust library"

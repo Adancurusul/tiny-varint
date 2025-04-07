@@ -13,13 +13,14 @@ A dependency-free, high-performance variable-length integer (VarInt) encoding/de
 - ✅ **High-performance Implementation**: Optimized critical paths for resource-constrained scenarios
 - ✅ **Iterator-based Interface**: No dynamic memory allocation required, suitable for embedded systems
 - ✅ **Zigzag Encoding**: Efficiently handles signed integers
+- ✅ **Type-aware VarintValue**: Unified type for mixed data serialization
 - ✅ **Rich Error Handling**: Detailed error types and messages
 
 ## Installation
 
 ```toml
 [dependencies]
-tiny-varint = "0.1.0"
+tiny-varint = "0.2.0"
 ```
 
 ## Feature Overview
@@ -35,6 +36,7 @@ tiny-varint = "0.1.0"
 | Batch Processing | `VarIntEncoder/VarIntDecoder` | Batch encodes/decodes integer arrays |
 | Iterator-based Encoding | `bytes_of()` | Iterator-based encoding method |
 | Iterator-based Decoding | `values_from()` | Iterator-based decoding method |
+| Unified Value Type | `VarintValue` | Type-aware encoding for mixed integer types |
 
 ### Direct Usage with encode/decode
 
@@ -106,6 +108,46 @@ for result in values_from::<u64>(&buffer) {
 }
 ```
 
+### Using VarintValue for Mixed Types
+
+The `VarintValue` enum allows working with different integer types through a unified interface:
+
+```rust
+use tiny_varint::{VarintValue, varint};
+
+// Create values of different types
+let values = [
+    varint!(u32: 42),
+    varint!(i16: -100),
+    varint!(u64: 1000000)
+];
+
+// Serialize mixed-type values
+let mut buffer = [0u8; 100];
+let mut pos = 0;
+
+for value in &values {
+    let bytes_written = value.to_bytes(&mut buffer[pos..]).unwrap();
+    pos += bytes_written;
+}
+
+// Deserialize values while preserving their original types
+let mut read_pos = 0;
+let mut index = 0;
+
+while read_pos < pos {
+    let (value, bytes_read) = VarintValue::from_bytes(&buffer[read_pos..]).unwrap();
+    println!("Value {}: {:?}", index, value);
+    read_pos += bytes_read;
+    index += 1;
+}
+
+// Each value maintains its original type
+assert!(matches!(values[0], VarintValue::U32(_)));
+assert!(matches!(values[1], VarintValue::I16(_)));
+assert!(matches!(values[2], VarintValue::U64(_)));
+```
+
 ## Performance Optimizations
 
 tiny-varint has been optimized for various use cases:
@@ -171,14 +213,54 @@ decoder.read_batch(&mut decoded)?;
 assert_eq!(values, decoded);
 ```
 
+### Type-aware Protocol Messages
+
+```rust
+use tiny_varint::{VarintValue, varint};
+
+// Create a simple protocol message
+struct Message {
+    id: VarintValue,
+    temperature: VarintValue,
+    data_points: Vec<VarintValue>,
+}
+
+let msg = Message {
+    id: varint!(u16: 1234),
+    temperature: varint!(i8: -10),
+    data_points: vec![varint!(i32: -100), varint!(i32: 0), varint!(i32: 100)],
+};
+
+// Serialize the message
+let mut buffer = [0u8; 100];
+let mut pos = 0;
+
+// Write fields - types are preserved automatically
+pos += msg.id.to_bytes(&mut buffer[pos..]).unwrap();
+pos += msg.temperature.to_bytes(&mut buffer[pos..]).unwrap();
+
+// Write number of data points
+pos += varint!(u8: msg.data_points.len() as u8).to_bytes(&mut buffer[pos..]).unwrap();
+
+// Write each data point
+for point in &msg.data_points {
+    pos += point.to_bytes(&mut buffer[pos..]).unwrap();
+}
+
+// Total message size
+println!("Message serialized to {} bytes", pos);
+```
+
 ## Complete Examples
 
 Check the [examples](./examples) directory for more examples:
 
 - [Basic Usage](./examples/basic_usage.rs)
 - [Protocol Serialization](./examples/protocol_serialization.rs)
-- [Iterator API](./examples/zero_copy.rs)
-
+- [Iterator API](./examples/iterator_api.rs)
+- [Value Types](./examples/value_types.rs)
+- [Benchmark](./examples/benchmark.rs)
+- 
 ## License
 
 Dual-licensed under MIT/Apache-2.0 licenses. 
